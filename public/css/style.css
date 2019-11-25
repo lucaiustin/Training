@@ -1,0 +1,25 @@
+.container{
+    width: 1000px;
+    margin: auto;
+}
+
+.product{
+    display: block;
+    height: 500px;
+}
+
+.product-image{
+    float: left;
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+}
+
+.product-image img{
+    width: 100%;
+    heigh: auto;
+}
+.product-info{
+    float: right;
+    width: 400px;
+}
