@@ -1,37 +1,30 @@
 <?php
-try {
-    $user = 'root';
-    $pass = '';
-    $dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);
-    $stmt  = $dbh->query('SELECT * from products');
+    require_once ("common.php");
 
     session_start();
-    #$_SESSION['cart'] = [];
-    if(!isset($_SESSION["cart"])) {
+    //$_SESSION['cart'] = [];
+    if (!isset($_SESSION["cart"])) {
         $_SESSION['cart'] = [];
     }
 
     $session_cart_ids = $_SESSION['cart'];
-    $products = [];
-    while($row = $stmt->fetch())
-    {
-        $gasit = 1;
-        foreach ($session_cart_ids as $session_product_id)
-        {
-            if($session_product_id == $row['id']) {
-                $gasit = 0;
-            }
-        }
-        if($gasit == 1)
-        {
-            array_push($products, $row);
-        }
+
+    $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN ('.implode(", ",$session_cart_ids).')');
+    $stmt->execute( array(':table_name' => $table_name) );
+
+    if ($stmt !== FALSE) {
+        $products = $stmt->fetchAll();
+    } else {
+        $products = [];
     }
-    $dbh = null;
-} catch (PDOException $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
-    die();
-}
+
+    if (isset($_GET["id"])) {
+        $id = htmlspecialchars($_GET["id"]);
+        if (!in_array($id, $_SESSION['cart'])) {
+            array_push($_SESSION['cart'], htmlspecialchars($_GET["id"]));
+        }
+        header('Location: index.php');
+    }
 ?>
 
 <html>
@@ -45,15 +38,13 @@ try {
                 <?php foreach($products as $product): ?>
                     <div class = "product">
                         <div class = "product-image">
-                             <img src = 'images/<?php echo $product['image_name']; ?>'>
+                             <img src = 'images/<?= $product['image_name']; ?>'>
                         </div>
                         <div class = "product-info">
-                            <?php
-                                echo $product['id'];
-                                echo $product['title'];
-                            ?>
+                            <?= $product['id']; ?>
+                            <?= translate($product['title']); ?>
                         </div>
-                        <a href = '/add_to_cart.php?id=<?php echo $product['id']; ?>'>Add</a>
+                        <a href = '/index.php?id=<?= $product['id']; ?>'>Add</a>
                     </div>
                 <?php endforeach; ?>
             </div>
