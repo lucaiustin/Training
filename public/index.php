@@ -9,8 +9,8 @@
 
     $session_cart_ids = $_SESSION['cart'];
 
-    $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN ('.implode(", ",$session_cart_ids).')');
-    $stmt->execute( array(':table_name' => $table_name) );
+    $stmt = $dbh->prepare('SELECT * FROM '. $table_name .' WHERE id NOT IN ('.implode(", ",$session_cart_ids).')');
+    $stmt->execute();
 
     if ($stmt !== FALSE) {
         $products = $stmt->fetchAll();
