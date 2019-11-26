@@ -19,7 +19,7 @@
     }
 
     if (isset($_GET['id'])) {
-        if (filter_var($_GET['id'], FILTER_VALIDATE_INT) && in_array($id, $_SESSION['cart'])) {
+        if (filter_var($_GET['id'], FILTER_VALIDATE_INT) && in_array($_GET['id'], $_SESSION['cart'])) {
             if (($key = array_search($_GET['id'], $_SESSION['cart'])) !== false) {
                 unset($_SESSION['cart'][$key]);
             }
@@ -76,12 +76,12 @@
 
             // Compose a simple HTML email message
             $message = '<html><body>';
-            $message .= 'Name: ' . $name . 'Contact Details: ' . $contact_details . 'Comments: ' . $comments;
+            $message .= 'Name: ' . $name . ' Contact Details: ' . $contact_details . ' Comments: ' . $comments;
             $message .= '<div class="product-list">';
             foreach ($products as $product) {
                 $message .= '<div class="product">';
                 $message .= '<img src="images/<?= $product["image_name"]; ?>">';
-                $message .= $product["id"] . $product["title"] . $product["price"];
+                $message .= $product["id"] . 'Title: ' . $product["title"] . ' Price: ' . $product["price"];
                 $message .= '</div>';
             }
             $message .= '</div>';
