@@ -2,5 +2,4 @@
 $dsn             = '';
 $user            = '';
 $pass            = '';
-$table_name = '';
-?>
+$table_name      = '';
