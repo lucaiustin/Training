@@ -1,18 +1,15 @@
 <?php
-    require_once("../common.php");
+    require_once('../common.php');
 
     session_start();
-    if (!isset($_SESSION["cart"])) {
-        $_SESSION['cart'] = [];
+    if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
+        $_SESSION['cart'] = [-1];
     }
-    $session_cart_ids = $_SESSION['cart'];
-    $question_marks_array = array_fill(0, count($session_cart_ids), '?');
-    $question_marks_string = implode(", ", $question_marks_array);
-    $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN ('.$question_marks_string.')');
-    foreach ($session_cart_ids as $k => $id) {
-        $stmt->bindValue(($k+1), $id);
-    }
-    $stmt->execute();
+    $question_marks_array = array_fill(0, count($_SESSION['cart']), '?');
+    $question_marks_string = implode(', ', $question_marks_array);
+    $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN (' . $question_marks_string . ')');
+
+    $stmt->execute($_SESSION['cart']);
 
     if ($stmt !== FALSE) {
         $products = $stmt->fetchAll();
@@ -20,15 +17,14 @@
         $products = [];
     }
 
-    if (isset($_GET["id"])) {
-        if (filter_var($_GET["id"], FILTER_VALIDATE_INT) && !in_array($id, $_SESSION['cart'])) {
-                array_push($_SESSION['cart'], $_GET["id"]);
+    if (isset($_GET['id'])) {
+        if (filter_var($_GET['id'], FILTER_VALIDATE_INT) && !in_array($id, $_SESSION['cart'])) {
+            array_push($_SESSION['cart'], $_GET['id']);
         }
         header('Location: index.php');
         exit;
     }
 ?>
-
 <html>
     <head>
         <title><?= translate('Products'); ?></title>
@@ -45,12 +41,13 @@
                         <div class="product-info">
                             <?= $product["id"]; ?>
                             <?= $product["title"]; ?>
+                            <?= $product["price"]; ?>
                         </div>
-                        <a href="/index.php?id=<?= $product["id"]; ?>">Add</a>
+                        <a href="/index.php?id=<?= $product["id"]; ?>"><?= translate('Add'); ?></a>
                     </div>
                 <?php endforeach; ?>
             </div>
-            <a href=''>Go to cart</a>
+            <a href="cart.php"><?= translate('Go to cart'); ?></a>
         </div>
     </body>
 </html>
