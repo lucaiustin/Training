@@ -2,27 +2,31 @@
     require_once('../common.php');
 
     session_start();
-    if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
-        $_SESSION['cart'] = [-1];
-    }
-    $question_marks_array = array_fill(0, count($_SESSION['cart']), '?');
-    $question_marks_string = implode(', ', $question_marks_array);
-    $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN (' . $question_marks_string . ')');
-
-    $stmt->execute($_SESSION['cart']);
-
-    if ($stmt !== FALSE) {
-        $products = $stmt->fetchAll();
-    } else {
-        $products = [];
-    }
-
     if (isset($_GET['id'])) {
         if (filter_var($_GET['id'], FILTER_VALIDATE_INT) && !in_array($id, $_SESSION['cart'])) {
             array_push($_SESSION['cart'], $_GET['id']);
         }
         header('Location: index.php');
         exit;
+    }
+
+    if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
+        $_SESSION['cart'] = [];
+    }
+
+    if (count($_SESSION['cart']) > 0) {
+        $question_marks_array = array_fill(0, count($_SESSION['cart']), '?');
+        $question_marks_string = implode(', ', $question_marks_array);
+        $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN (' . $question_marks_string . ')');
+    } else {
+        $stmt = $dbh->prepare('SELECT * FROM products');
+    }
+    $stmt->execute($_SESSION['cart']);
+
+    if ($stmt !== FALSE) {
+        $products = $stmt->fetchAll();
+    } else {
+        $products = [];
     }
 ?>
 <html>
