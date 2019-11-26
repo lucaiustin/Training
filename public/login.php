@@ -1,6 +1,14 @@
 <?php
     require_once('../common.php');
     if (isset($_POST['submit'])) {
+        $validated_username = validateInput($_POST['username']);
+        $validated_password = validateInput($_POST['password']);
+        if (strcmp($validated_username, $username) == 0 && strcmp($validated_password, $password) == 0) {
+            session_start();
+            $_SESSION['username'] = $validated_username;
+            header('Location: index.php');
+            exit;
+        }
     }
 ?>
 <html>
@@ -10,7 +18,7 @@
     <body>
         <form action="login.php" method="post">
             <input type="text" name="username" value="<?= translate('Username'); ?>"><br>
-            <input type="password" name="password" value="value="<?= translate('Password'); ?>""><br>
+            <input type="password" name="password" value="value="<?= translate('Password'); ?>"><br>
             <input type="submit" name="submit" value="<?= translate('Login'); ?>">
         </form>
     </body>
