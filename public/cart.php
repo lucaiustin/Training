@@ -3,14 +3,14 @@
     require_once('../common.php');
 
     session_start();
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [-1];
+    }
 
     $question_marks_array = array_fill(0, count($_SESSION['cart']), '?');
     $question_marks_string = implode(", ", $question_marks_array);
     $stmt = $dbh->prepare('SELECT * FROM products WHERE id IN ('.$question_marks_string.')');
-    foreach ($_SESSION['cart'] as $k => $id) {
-        $stmt->bindValue(($k+1), $id);
-    }
-    $stmt->execute();
+    $stmt->execute($_SESSION['cart']);
 
     if ($stmt !== FALSE) {
         $products = $stmt->fetchAll();
