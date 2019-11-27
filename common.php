@@ -6,6 +6,8 @@
 
     $dbh = new PDO(DNS, DB_USER, DB_PASS);
 
+    session_start();
+
     function translate($str) {
         return $str;
     }

@@ -4,7 +4,6 @@
         $validated_username = validateInput($_POST['username']);
         $validated_password = validateInput($_POST['password']);
         if (strcmp($validated_username, USERNAME) == 0 && strcmp($validated_password, PASSWORD) == 0) {
-            session_start();
             $_SESSION['username'] = $validated_username;
             header('Location: products.php');
             exit;

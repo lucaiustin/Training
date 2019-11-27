@@ -1,8 +1,6 @@
 <?php
     require_once('../common.php');
 
-    session_start();
-
     if (isset($_SESSION['username'])) {
         $stmt = $dbh->prepare('SELECT * FROM products');
         $stmt->execute();
