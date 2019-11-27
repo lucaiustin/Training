@@ -1,7 +1,7 @@
 <?php
-$dsn                  = 'mysql:dbname=db_name;host=sever_address';
-$user                 = '';
-$pass                 = '';
-$shop_manager_email   = '';
-$username             = '';
-$password             = '';
+define('DNS', 'mysql:host=sever_address;dbname=db_name');
+define('DB_USER', '');
+define('DB_PASS', '');
+define('SHOP_MANAGER_EMAIL', '');
+define('USERNAME', '');
+define('PASSWORD', '');

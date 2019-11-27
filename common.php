@@ -4,7 +4,7 @@
 
     require_once('config.php');
 
-    $dbh = new PDO($dsn, $user, $pass);
+    $dbh = new PDO(DNS, DB_USER, DB_PASS);
 
     function translate($str) {
         return $str;

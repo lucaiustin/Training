@@ -59,7 +59,7 @@
         }
 
         if ($send_email) {
-            $to = $shop_manager_email;
+            $to = SHOP_MANAGER_EMAIL;
             $subject = 'New order';
             $from = 'peterparker@email.com';
 

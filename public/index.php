@@ -2,16 +2,17 @@
     require_once('../common.php');
 
     session_start();
+
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+
     if (isset($_GET['id'])) {
-        if (filter_var($_GET['id'], FILTER_VALIDATE_INT) && !in_array($id, $_SESSION['cart'])) {
+        if (filter_var($_GET['id'], FILTER_VALIDATE_INT) && !in_array($_GET['id'], $_SESSION['cart'])) {
             array_push($_SESSION['cart'], $_GET['id']);
         }
         header('Location: index.php');
         exit;
-    }
-
-    if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
-        $_SESSION['cart'] = [];
     }
 
     if (count($_SESSION['cart']) > 0) {
@@ -40,7 +41,7 @@
                 <?php foreach($products as $product): ?>
                     <div class="product">
                         <div class="product-image">
-                             <img src="images/<?= $product["image_name"]; ?>">
+                             <img src="images/<?= $product['image_name']; ?>">
                         </div>
                         <div class="product-info">
                             <?= $product["id"]; ?>

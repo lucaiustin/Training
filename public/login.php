@@ -3,10 +3,10 @@
     if (isset($_POST['submit'])) {
         $validated_username = validateInput($_POST['username']);
         $validated_password = validateInput($_POST['password']);
-        if (strcmp($validated_username, $username) == 0 && strcmp($validated_password, $password) == 0) {
+        if (strcmp($validated_username, USERNAME) == 0 && strcmp($validated_password, PASSWORD) == 0) {
             session_start();
             $_SESSION['username'] = $validated_username;
-            header('Location: index.php');
+            header('Location: products.php');
             exit;
         }
     }
