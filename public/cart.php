@@ -33,6 +33,11 @@
     $errors['comments'] = '';
     $errors['send_email'] = '';
     $mail_status = '';
+
+    $name = translate('Name');
+    $contact_details = translate('Contact Details');
+    $comments = translate('Comments');
+
     // Validate form data and send email
     if (isset($_POST['submit'])) {
         if (strlen($_POST['name']) > 5) {
@@ -89,12 +94,12 @@
 
             // Sending email
             if (mail($to, $subject, $message, $headers)) {
-                $mail_status = 'Your mail has been sent successfully.';
+                $mail_status = translate('Your mail has been sent successfully.');
             } else {
-                $mail_status = 'Unable to send email. Please try again.';
+                $mail_status = translate('Unable to send email. Please try again.');
             }
         } else {
-            $mail_status = 'Unable to send email. Please try again.';
+            $mail_status = translate('Unable to send email. Please try again.');
         }
     }
 ?>
@@ -122,18 +127,18 @@
             </div>
             <a href="index.php"><?= translate('Go to index'); ?></a>
             <form method="post">
-                <input type="text" name="name" placeholder="<?= translate('Name'); ?>">
-                <?= translate($errors['name']); ?>
+                <input type="text" name="name" value="<?= $name; ?>">
+                <?= $errors['name']; ?>
                 <br>
-                <input type="text" name="contact_details" placeholder="<?= translate('Contact details'); ?>">
-                <?= translate($errors['contact_details']); ?>
+                <input type="text" name="contact_details" value="<?= $contact_details; ?>">
+                <?= $errors['contact_details']; ?>
                 <br>
-                <textarea name="comments" rows="10" cols="30"><?= translate('Comments'); ?></textarea>
-                <?= translate($errors['comments']); ?>
+                <textarea name="comments" rows="10" cols="30"><?= $comments; ?></textarea>
+                <?= $errors['comments']; ?>
                 <br>
                 <input type="submit" name="submit" placeholder="<?= translate('Checkout'); ?>">
             </form>
-                <?= translate($mail_status); ?>
+                <?= $mail_status; ?>
         </div>
     </body>
 </html>
