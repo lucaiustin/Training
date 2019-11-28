@@ -16,9 +16,9 @@
     </head>
     <body>
         <form action="login.php" method="post">
-            <input type="text" name="username" value="<?= translate('Username'); ?>"><br>
-            <input type="password" name="password" value="value="<?= translate('Password'); ?>"><br>
-            <input type="submit" name="submit" value="<?= translate('Login'); ?>">
+            <input type="text" name="username" placeholder="<?= translate('Username'); ?>"><br>
+            <input type="password" name="password" placeholder="<?= translate('Password'); ?>"><br>
+            <input type="submit" name="submit" placeholder="<?= translate('Login'); ?>">
         </form>
     </body>
 </html>
