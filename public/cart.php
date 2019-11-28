@@ -26,46 +26,64 @@
         $products = [];
     }
 
-    $send_email = True;
+    $submit_ok = True;
     $errors = [];
     $errors['name'] = '';
     $errors['contact_details'] = '';
     $errors['comments'] = '';
     $errors['send_email'] = '';
     $mail_status = '';
+    $save_order_status = '';
 
-    $name = translate('Name');
-    $contact_details = translate('Contact Details');
-    $comments = translate('Comments');
+    $name = '';
+    $contact_details = '';
+    $comments = '';
 
     // Validate form data and send email
     if (isset($_POST['submit'])) {
         if (strlen($_POST['name']) > 5) {
             $name = validateInput($_POST['name']);
         } else {
-            $send_email = False;
+            $submit_ok = False;
             $errors['name'] = 'Input name error!';
         }
 
         if (strlen($_POST['contact_details']) > 5) {
             $contact_details = validateInput($_POST['contact_details']);
         } else {
-            $send_email = False;
+            $submit_ok = False;
             $errors['contact_details'] = 'Input contact error!';
         }
 
         if (strlen($_POST['comments']) > 5) {
             $comments = validateInput($_POST['comments']);
         } else {
-            $send_email = False;
+            $submit_ok = False;
             $errors['comments'] = 'Input comments error';
         }
 
         if (count($_SESSION['cart']) < 1) {
-            $send_email = False;
+            $submit_ok = False;
+            $order_status = 'There are not enough products!';
         }
 
-        if ($send_email) {
+        if ($submit_ok) {
+            //Save data to database
+            $save_order_status = 'Please try again.';
+
+            $date = date('Y-m-d H:i:s');
+
+            $stmt = $dbh->prepare('INSERT INTO orders (customer_details, creation_date) VALUES (?,?)');
+            $stmt->execute([$contact_details, $date]);
+            $last_order_id = $dbh->lastInsertId();
+
+            foreach ($_SESSION['cart'] as $product_id) {
+                $stmt = $dbh->prepare('INSERT INTO products_orders (product_id, order_id) VALUES (?,?)');
+                $stmt->execute([$product_id, $last_order_id]);
+            }
+            $save_order_status = 'The order has been created.';
+
+            //Send email
             $to = SHOP_MANAGER_EMAIL;
             $subject = translate('New order');
             $from = SHOP_MANAGER_EMAIL;
@@ -127,18 +145,19 @@
             </div>
             <a href="index.php"><?= translate('Go to index'); ?></a>
             <form method="post">
-                <input type="text" name="name" value="<?= $name; ?>">
+                <input type="text" name="name" value="<?= $name; ?>" placeholder="<?= translate('Name'); ?>">
                 <?= $errors['name']; ?>
                 <br>
-                <input type="text" name="contact_details" value="<?= $contact_details; ?>">
+                <input type="text" name="contact_details" value="<?= $contact_details; ?>" placeholder="<?= translate('Contact details'); ?>">
                 <?= $errors['contact_details']; ?>
                 <br>
-                <textarea name="comments" rows="10" cols="30"><?= $comments; ?></textarea>
+                <textarea name="comments" rows="10" cols="30" placeholder="Comments"><?= $comments; ?></textarea>
                 <?= $errors['comments']; ?>
                 <br>
                 <input type="submit" name="submit" placeholder="<?= translate('Checkout'); ?>">
             </form>
-                <?= $mail_status; ?>
+            <?= $save_order_status; ?>
+            <?= $mail_status; ?>
         </div>
     </body>
 </html>
