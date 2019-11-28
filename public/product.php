@@ -40,7 +40,7 @@
             $file_tmp = $_FILES['image']['tmp_name'];
 
             $tmp = explode('.', $file_name);
-            $file_ext = strtolower(end( $tmp ));
+            $file_ext = strtolower(end($tmp));
             $extensions = array('jpeg', 'jpg', 'png');
 
             if (in_array( $file_ext, $extensions ) === false) {
@@ -52,8 +52,6 @@
                 $errors['image_file'] = 'File size must be excately 2 MB';
                 $submit_ok = False;
             }
-
-            move_uploaded_file($file_tmp, 'images/' . $file_name);
         }
 
         if (strlen($_POST['title']) > 5) {
@@ -85,6 +83,8 @@
         }
 
         if ($submit_ok) {
+            move_uploaded_file($file_tmp, 'images/' . $file_name);
+
             if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
                 $stmt = $dbh->prepare('UPDATE products SET title=?, description=?, price=?, image_name=? WHERE id=?');
                 $stmt->execute([$title, $description, $price, $image_name, $_GET['id']]);
@@ -118,7 +118,7 @@
             <input type="text" name="image-name" value="<?= $product['image_name']; ?>">
             <?= translate($errors['image_name']); ?>
             <br>
-            <input type="file" name="image" />
+            <input type="file" name="image">
             <?= translate($errors['image_file']); ?>
             <br>
             <input type="submit" name="submit" value="<?= translate('Save'); ?>">

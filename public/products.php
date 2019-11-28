@@ -18,13 +18,12 @@
     }
 
     if (isset($_GET['delete']) && filter_var($_GET['delete'], FILTER_VALIDATE_INT)) {
-        $stmt = $dbh->prepare('DELETE FROM products WHERE id =:id');
+        $stmt = $dbh->prepare('DELETE FROM products WHERE id = :id');
         $stmt->bindParam(':id', $_GET['delete']);
         $stmt->execute();
         header('Location: products.php');
         exit;
     }
-
 ?>
 <html>
     <head>

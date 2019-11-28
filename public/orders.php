@@ -9,6 +9,7 @@
     $errors['customer_details'] = '';
     $errors['products'] = '';
     $submit_message = '';
+
     if (isset($_POST['submit'])) {
         $submit_message = 'Please try again.';
          if (strlen($_POST['customer-details']) > 3) {
@@ -18,7 +19,8 @@
 
                  $stmt = $dbh->prepare('INSERT INTO orders (customer_details, creation_date) VALUES (?,?)');
                  $stmt->execute([$customer_details, $date]);
-                 $last_order_id= $dbh->lastInsertId();
+                 $last_order_id = $dbh->lastInsertId();
+
                  foreach ($_SESSION['cart'] as $product_id) {
                      $stmt = $dbh->prepare('INSERT INTO products_orders (product_id, order_id) VALUES (?,?)');
                      $stmt->execute([$product_id, $last_order_id]);
