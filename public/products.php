@@ -1,29 +1,38 @@
 <?php
     require_once('../common.php');
 
-    if (isset($_GET['logout'])) {
-        unset($_SESSION['username']);
-        header('Location: products.php');
-        exit;
-    }
-
-    if (isset($_SESSION['username'])) {
-        $stmt = $dbh->prepare('SELECT * FROM products');
-        $stmt->execute();
-
-        $products = $stmt->fetchAll();
-    } else {
+    if (!isset($_SESSION['username'])) {
         header('Location: login.php');
         exit;
     }
 
-    if (isset($_GET['delete']) && filter_var($_GET['delete'], FILTER_VALIDATE_INT)) {
-        $stmt = $dbh->prepare('DELETE FROM products WHERE id = :id');
-        $stmt->bindParam(':id', $_GET['delete']);
+    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+        //Delete the image from folder
+        $stmt = $dbh->prepare('SELECT image_name FROM products WHERE id = :id');
+        $stmt->bindParam(':id', $_GET['id']);
         $stmt->execute();
+        $image_name = $stmt->fetch()['image_name'];
+        unlink('images/' . $image_name);
+
+        //Delete row from database
+        $stmt = $dbh->prepare('DELETE FROM products WHERE id = :id');
+        $stmt->bindParam(':id', $_GET['id']);
+        $stmt->execute();
+
         header('Location: products.php');
         exit;
     }
+
+    if (isset($_GET['logout'])) {
+        unset($_SESSION['username']);
+        header('Location: login.php');
+        exit;
+    }
+
+    $stmt = $dbh->prepare('SELECT * FROM products');
+    $stmt->execute();
+
+    $products = $stmt->fetchAll();
 ?>
 <html>
     <head>
@@ -44,7 +53,7 @@
                             <?= $product['price']; ?>
                         </div>
                         <a href="product.php?id=<?= $product['id']; ?>"><?= translate('Edit'); ?></a>
-                        <a href="products.php?delete=<?= $product['id']; ?>"><?= translate('Delete'); ?></a>
+                        <a href="products.php?id=<?= $product['id']; ?>"><?= translate('Delete'); ?></a>
                     </div>
                 <?php endforeach; ?>
             </div>

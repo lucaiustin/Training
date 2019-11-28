@@ -6,20 +6,25 @@
     $error['password'] = '';
     $error['submit'] = '';
 
+    $validated_username = translate('Username');
+    $validated_password = translate('Password');
+
     if (isset($_POST['submit'])) {
         $submit_ok = True;
 
         if (strlen($_POST['username']) > 3) {
             $validated_username = validateInput($_POST['username']);
         } else {
-            $error['username'] = 'Username error!';
+            $validated_username = '';
+            $error['username'] = translate('Username error!');
             $submit_ok = False;
         }
 
         if (strlen($_POST['password']) > 3) {
             $validated_password = validateInput($_POST['password']);
         } else {
-            $error['password'] = 'Password error!';
+            $validated_password = '';
+            $error['password'] = translate('Password error!');
             $submit_ok = False;
         }
 
@@ -30,7 +35,7 @@
                 exit;
             }
         } else {
-            $error['submit'] = 'Please try again.';
+            $error['submit'] = translate('Please try again.');
         }
     }
 ?>
@@ -40,10 +45,10 @@
     </head>
     <body>
         <form action="login.php" method="post">
-            <input type="text" name="username" placeholder="<?= translate('Username'); ?>"><br>
+            <input type="text" name="username" value="<?= $validated_username; ?>"><br>
             <?= $error['username']; ?>
 
-            <input type="password" name="password" placeholder="<?= translate('Password'); ?>"><br>
+            <input type="password" name="password" value="<?= $validated_password; ?>"><br>
             <?= $error['password']; ?>
 
             <input type="submit" name="submit" placeholder="<?= translate('Login'); ?>">

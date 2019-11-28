@@ -1,26 +1,16 @@
 <?php
     require_once('../common.php');
 
+    if (!isset($_SESSION['username'])) {
+        header('Location: login.php');
+        exit;
+    }
+
     $product = [];
     $product['title'] = '';
     $product['description'] = '';
     $product['price'] = '';
     $product['image_name'] = '';
-
-    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-        $stmt = $dbh->prepare('SELECT * FROM products WHERE id = ?');
-        $stmt->execute([$_GET['id']]);
-        $product = $stmt->fetch();
-        if (!$product) {
-            header('Location: products.php');
-            exit;
-        }
-    } else {
-        $product['title'] = 'Title';
-        $product['description'] = 'Description';
-        $product['price'] = 'Price';
-        $product['image_name'] = 'Image';
-    }
 
     $errors = [];
     $errors['title'] = '';
@@ -38,48 +28,46 @@
             $file_name = $_FILES['image']['name'];
             $file_size = $_FILES['image']['size'];
             $file_tmp = $_FILES['image']['tmp_name'];
+            $file_type = $_FILES['image']['type'];
 
-            $tmp = explode('.', $file_name);
-            $file_ext = strtolower(end($tmp));
-            $extensions = array('jpeg', 'jpg', 'png');
-
-            if (in_array( $file_ext, $extensions ) === false) {
-                $errors['image_file'] = 'extension not allowed, please choose a JPEG or PNG file.';
+            if (strcmp($file_type, 'image/jpeg') != 0) {
+                $errors['image_file'] = translate('extension not allowed, please choose a JPEG or PNG file.');
                 $submit_ok = False;
             }
 
             if ($file_size > 2097152) {
-                $errors['image_file'] = 'File size must be excately 2 MB';
+                $errors['image_file'] = translate('File size must be exactly 2 MB');
                 $submit_ok = False;
             }
         }
 
         if (strlen($_POST['title']) > 5) {
-            $title = validateInput($_POST['title']);
+            $product['title'] = validateInput($_POST['title']);
         } else {
             $submit_ok = False;
-            $errors['title'] = 'Input title error!';
+            $errors['title'] = translate('Input title error!');
         }
 
         if (strlen($_POST['description']) > 5) {
-            $description = validateInput($_POST['description']);
+            $product['description'] = validateInput($_POST['description']);
         } else {
             $submit_ok = False;
-            $errors['description'] = 'Input description error!';
+            $errors['contact_details'] = translate('Input description error!');
         }
 
         if (strlen($_POST['price']) > 3) {
-            $price = validateInput($_POST['price']);
+            $product['price'] = validateInput($_POST['price']);
         } else {
             $submit_ok = False;
-            $errors['price'] = 'Input price error!';
+            $errors['price'] = translate('Input price error!');
         }
 
-        if (strlen($_POST['title']) > 5) {
+        if (strlen($file_name) > 5) {
             $image_name = validateInput($file_name);
+            $product['image_name'] = $image_name;
         } else {
             $submit_ok = False;
-            $errors['image_name'] = 'Input image_name error!';
+            $errors['image_name'] = translate('Input image_name error!');
         }
 
         if ($submit_ok) {
@@ -87,16 +75,29 @@
 
             if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
                 $stmt = $dbh->prepare('UPDATE products SET title=?, description=?, price=?, image_name=? WHERE id=?');
-                $stmt->execute([$title, $description, $price, $image_name, $_GET['id']]);
+                $stmt->execute([$product['title'], $product['description'], $product['price'], $product['image_name'], $_GET['id']]);
+
+                header('Location: products.php');
+                exit;
             } else {
                 $stmt = $dbh->prepare('INSERT INTO products (title, description, price, image_name) VALUES (?,?,?,?)');
-                $stmt->execute([$title, $description, $price, $image_name]);
+                $stmt->execute([$product['title'], $product['description'], $product['price'], $product['image_name']]);
 
                 header('Location: products.php');
                 exit;
             }
         } else {
-            $errors['submit'] = 'Submit error!';
+            $errors['submit'] = translate('Submit error!');
+        }
+    }
+
+    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+        $stmt = $dbh->prepare('SELECT * FROM products WHERE id = ?');
+        $stmt->execute([$_GET['id']]);
+        $product = $stmt->fetch();
+        if (!$product) {
+            header('Location: products.php');
+            exit;
         }
     }
 ?>
@@ -106,20 +107,20 @@
     </head>
     <body>
         <form method="post" enctype="multipart/form-data">
-            <input type="text" name="title" value="<?= $product['title']; ?>">
-            <?= translate($errors['title']); ?>
+            <input type="text" name="title" value="<?= $product['title']; ?>" placeholder="<?= translate('Title'); ?>">
+            <?= $errors['title']; ?>
             <br>
-            <input type="text" name="description" value="<?= $product['description']; ?>">
-            <?= translate($errors['contact_details']); ?>
+            <input type="text" name="description" value="<?= $product['description']; ?>" placeholder="<?= translate('Description'); ?>">
+            <?= $errors['contact_details']; ?>
             <br>
-            <input type="text" name="price" value="<?= $product['price']; ?>">
-            <?= translate($errors['price']); ?>
+            <input type="text" name="price" value="<?= $product['price']; ?>" placeholder="<?= translate('Price'); ?>">
+            <?= $errors['price']; ?>
             <br>
-            <input type="text" name="image-name" value="<?= $product['image_name']; ?>">
-            <?= translate($errors['image_name']); ?>
+            <input type="text" name="image-name" value="<?= $product['image_name']; ?>" placeholder="<?= translate('Image Name'); ?>">
+            <?= $errors['image_name']; ?>
             <br>
             <input type="file" name="image">
-            <?= translate($errors['image_file']); ?>
+            <?= $errors['image_file']; ?>
             <br>
             <input type="submit" name="submit" value="<?= translate('Save'); ?>">
         </form>
