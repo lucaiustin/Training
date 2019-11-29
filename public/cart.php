@@ -102,14 +102,14 @@
             $message .= translate('Name: ') . translate($name) . translate(' Contact Details: ') . translate($contact_details) . translate(' Comments: ') . translate($comments);
             $message .= '<div class="product-list">';
             foreach ($products as $product) {
+                $image_src = 'images/' . $product['image_name'];
                 $message .= '<div class="product">';
-                $message .= '<img src="images/<?= $product["image_name"]; ?>">';
-                $message .= $product["id"] . translate('Title: ') . $product["title"] . translate(' Price: ') . $product["price"];
+                $message .= '<img src="'. $image_src .'">';
+                $message .= $product['id'] . translate('Title: ') . $product['title'] . translate(' Price: ') . $product['price'];
                 $message .= '</div>';
             }
             $message .= '</div>';
             $message .= '</body></html>';
-
             // Sending email
             if (mail($to, $subject, $message, $headers)) {
                 $mail_status = translate('Your mail has been sent successfully.');
@@ -132,14 +132,14 @@
                 <?php foreach($products as $product): ?>
                     <div class="product">
                         <div class="product-image">
-                            <img src="images/<?= $product["image_name"]; ?>">
+                            <img src="images/<?= $product['image_name']; ?>">
                         </div>
                         <div class="product-info">
-                            <?= $product["id"]; ?>
-                            <?= $product["title"]; ?>
-                            <?= $product["price"]; ?>
+                            <?= $product['id']; ?>
+                            <?= $product['title']; ?>
+                            <?= $product['price']; ?>
                         </div>
-                        <a href="/cart.php?id=<?= $product["id"]; ?>"><?= translate('Remove');?></a>
+                        <a href="/cart.php?id=<?= $product['id']; ?>"><?= translate('Remove');?></a>
                     </div>
                 <?php endforeach; ?>
             </div>
