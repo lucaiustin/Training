@@ -2,6 +2,12 @@
     require_once('../common.php');
 
     $order = [];
+    $order['customer_details'] = '';
+    $order['creation_date'] = '';
+    $order['products'] = '';
+    $order['total'] = '';
+    $order['products'] = [];
+
     if (isset($_GET['id'])) {
         $stmt = $dbh->prepare('SELECT * FROM orders WHERE id = ?');
         $stmt->execute([$_GET['id']]);
@@ -29,16 +35,18 @@
                 <?= $order['customer_details']; ?>
                 <br>
                 <?= $order['creation_date']; ?>
-                <ul>
-                    <?php foreach($order['products'] as $product): ?>
-                        <li>
-                            <?= $product['id']; ?>
-                            <?= $product['title']; ?>
-                            <?= $product['description']; ?>
-                            <?= $product['price']; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                <?php if(count($order['products']) > 0): ?>
+                    <ul>
+                        <?php foreach($order['products'] as $product): ?>
+                            <li>
+                                <?= $product['id']; ?>
+                                <?= $product['title']; ?>
+                                <?= $product['description']; ?>
+                                <?= $product['price']; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
                 <?= $order['total']; ?>
             </div>
         </div>
