@@ -69,7 +69,7 @@
 
         if ($submit_ok) {
             //Save data to database
-            $save_order_status = 'Please try again.';
+            $save_order_status = translate('Please try again.');
 
             $date = date('Y-m-d H:i:s');
 
@@ -81,7 +81,7 @@
                 $stmt = $dbh->prepare('INSERT INTO products_orders (product_id, order_id) VALUES (?,?)');
                 $stmt->execute([$product_id, $last_order_id]);
             }
-            $save_order_status = 'The order has been created.';
+            $save_order_status = translate('The order has been created.');
 
             //Send email
             $to = SHOP_MANAGER_EMAIL;
@@ -99,12 +99,12 @@
 
             // Compose a simple HTML email message
             $message = '<html><body>';
-            $message .= 'Name: ' . translate($name) . ' Contact Details: ' . translate($contact_details) . ' Comments: ' . translate($comments);
+            $message .= translate('Name: ') . translate($name) . translate(' Contact Details: ') . translate($contact_details) . translate(' Comments: ') . translate($comments);
             $message .= '<div class="product-list">';
             foreach ($products as $product) {
                 $message .= '<div class="product">';
                 $message .= '<img src="images/<?= $product["image_name"]; ?>">';
-                $message .= $product["id"] . 'Title: ' . $product["title"] . ' Price: ' . $product["price"];
+                $message .= $product["id"] . translate('Title: ') . $product["title"] . translate(' Price: ') . $product["price"];
                 $message .= '</div>';
             }
             $message .= '</div>';
