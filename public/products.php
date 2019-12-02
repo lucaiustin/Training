@@ -1,7 +1,10 @@
 <?php
     require_once('../common.php');
 
-    if (!isset($_SESSION['username'])) {
+    checkLogin();
+
+    if (isset($_GET['logout'])) {
+        unset($_SESSION['username']);
         header('Location: login.php');
         exit;
     }
@@ -11,8 +14,8 @@
         $stmt = $dbh->prepare('SELECT image_name FROM products WHERE id = :id');
         $stmt->bindParam(':id', $_GET['id']);
         $stmt->execute();
-        $image_name = $stmt->fetch()['image_name'];
-        unlink('images/' . $image_name);
+        $imageName = $stmt->fetch()['image_name'];
+        unlink('images/' . $imageName);
 
         //Delete row from database
         $stmt = $dbh->prepare('DELETE FROM products WHERE id = :id');
@@ -20,12 +23,6 @@
         $stmt->execute();
 
         header('Location: products.php');
-        exit;
-    }
-
-    if (isset($_GET['logout'])) {
-        unset($_SESSION['username']);
-        header('Location: login.php');
         exit;
     }
 

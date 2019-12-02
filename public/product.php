@@ -1,10 +1,7 @@
 <?php
     require_once('../common.php');
 
-    if (!isset($_SESSION['username'])) {
-        header('Location: login.php');
-        exit;
-    }
+    checkLogin();
 
     $product = [];
     $product['title'] = '';
@@ -20,58 +17,64 @@
     $errors['image_file'] = '';
     $errors['submit'] = '';
 
+    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+        $stmt = $dbh->prepare('SELECT * FROM products WHERE id = ?');
+        $stmt->execute([$_GET['id']]);
+        $product = $stmt->fetch();
+        if (!$product) {
+            header('Location: products.php');
+            exit;
+        }
+    }
+
     if (isset($_POST['submit'])) {
         // Validate form inputs
-        $submit_ok = True;
+        $submitOk = True;
 
         if (isset($_FILES['image'])) {
-            $file_name = $_FILES['image']['name'];
-            $file_size = $_FILES['image']['size'];
-            $file_tmp = $_FILES['image']['tmp_name'];
-            $file_type = $_FILES['image']['type'];
+            $fileName = $_FILES['image']['name'];
+            $fileSize = $_FILES['image']['size'];
+            $fileTmp = $_FILES['image']['tmp_name'];
+            $fileType = $_FILES['image']['type'];
 
-            if (strcmp($file_type, 'image/jpeg') != 0) {
+            if (strcmp($fileType, 'image/jpeg') != 0) {
                 $errors['image_file'] = translate('extension not allowed, please choose a JPEG or PNG file.');
-                $submit_ok = False;
+                $submitOk = False;
             }
 
-            if ($file_size > 2097152) {
+            if ($fileSize > 2097152) {
                 $errors['image_file'] = translate('File size must be exactly 2 MB');
-                $submit_ok = False;
+                $submitOk = False;
             }
         }
 
-        if (strlen($_POST['title']) > 5) {
-            $product['title'] = validateInput($_POST['title']);
-        } else {
-            $submit_ok = False;
+        $product['title'] = validateInput($_POST['title']);
+        $product['description'] = validateInput($_POST['description']);
+        $product['price'] = validateInput($_POST['price']);
+        $product['image_name'] = validateInput($fileName);
+
+        if (strlen($product['title']) < 5) {
+            $submitOk = False;
             $errors['title'] = translate('Input title error!');
         }
 
-        if (strlen($_POST['description']) > 5) {
-            $product['description'] = validateInput($_POST['description']);
-        } else {
-            $submit_ok = False;
+        if (strlen($product['description']) < 5) {
+            $submitOk = False;
             $errors['contact_details'] = translate('Input description error!');
         }
 
-        if (strlen($_POST['price']) > 3) {
-            $product['price'] = validateInput($_POST['price']);
-        } else {
-            $submit_ok = False;
+        if (strlen($product['price']) < 3) {
+            $submitOk = False;
             $errors['price'] = translate('Input price error!');
         }
 
-        if (strlen($file_name) > 5) {
-            $image_name = validateInput($file_name);
-            $product['image_name'] = $image_name;
-        } else {
-            $submit_ok = False;
+        if (strlen($product['image_name']) < 5) {
+            $submitOk = False;
             $errors['image_name'] = translate('Input image_name error!');
         }
 
-        if ($submit_ok) {
-            move_uploaded_file($file_tmp, 'images/' . $file_name);
+        if ($submitOk) {
+            move_uploaded_file($fileTmp, 'images/' . $fileName);
 
             if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
                 $stmt = $dbh->prepare('UPDATE products SET title=?, description=?, price=?, image_name=? WHERE id=?');
@@ -88,16 +91,6 @@
             }
         } else {
             $errors['submit'] = translate('Submit error!');
-        }
-    }
-
-    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-        $stmt = $dbh->prepare('SELECT * FROM products WHERE id = ?');
-        $stmt->execute([$_GET['id']]);
-        $product = $stmt->fetch();
-        if (!$product) {
-            header('Location: products.php');
-            exit;
         }
     }
 ?>

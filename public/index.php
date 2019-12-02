@@ -14,9 +14,9 @@
     }
 
     if (count($_SESSION['cart']) > 0) {
-        $question_marks_array = array_fill(0, count($_SESSION['cart']), '?');
-        $question_marks_string = implode(', ', $question_marks_array);
-        $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN (' . $question_marks_string . ')');
+        $questionMarksArray = array_fill(0, count($_SESSION['cart']), '?');
+        $questionMarksString = implode(', ', $questionMarksArray);
+        $stmt = $dbh->prepare('SELECT * FROM products WHERE id NOT IN (' . $questionMarksString . ')');
     } else {
         $stmt = $dbh->prepare('SELECT * FROM products');
     }

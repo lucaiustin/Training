@@ -8,11 +8,21 @@
 
     session_start();
 
-    function translate($str) {
+    function translate($str)
+    {
         return $str;
     }
 
-    function validateInput($data) {
+    function validateInput($data)
+    {
         $data = strip_tags($data);
         return $data;
+    }
+
+    function checkLogin()
+    {
+        if (!isset($_SESSION['username'])) {
+            header( 'Location: login.php' );
+            exit;
+        }
     }

@@ -1,6 +1,8 @@
 <?php
     require_once('../common.php');
 
+    checkLogin();
+
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
@@ -8,23 +10,19 @@
     $errors = [];
     $errors['customer_details'] = '';
     $errors['products'] = '';
-    $submit_message = '';
+    $submitMessage = '';
 
     $orders = [];
-    $stmt = $dbh->prepare('SELECT * FROM orders');
+    $stmt = $dbh->prepare('SELECT o.id, creation_date,  customer_details, sum(p.price) as price_sum FROM orders o INNER JOIN products_orders po on o.id = po.order_id INNER JOIN products p ON po.product_id = p.id GROUP BY o.id');
     $stmt->execute();
-    $orders_info = $stmt->fetchAll();
+    $ordersInfo = $stmt->fetchAll();
 
-    foreach ($orders_info as $info) {
+    foreach ($ordersInfo as $info) {
         $order = [];
         $order['id'] = $info['id'];
         $order['creation_date'] = $info['creation_date'];
         $order['customer_details'] = $info['customer_details'];
-
-        $stmt = $dbh->prepare('SELECT sum(p.price) FROM products p JOIN products_orders po ON p.id = po.product_id WHERE po.order_id = ? GROUP BY  po.order_id');
-        $stmt->execute([$info['id']]);
-        $order['total'] = $stmt->fetch()[0];
-
+        $order['total'] = $info['price_sum'];
         array_push($orders, $order);
     }
 ?>
@@ -42,7 +40,7 @@
                         <?= $order['customer_details']; ?>
                         <?= $order['total']; ?>
                     </div>
-                    <a href = "order.php?id=<?= $order['id']; ?>">View Order</a>
+                    <a href = "order.php?id=<?= $order['id']; ?>"><?= translate('View Order'); ?></a>
                     <hr>
                 <?php endforeach; ?>
             </div>

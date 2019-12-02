@@ -2,6 +2,10 @@
 
     require_once('../common.php');
 
+    require '../vendor/autoload.php';
+
+    use PHPMailer\PHPMailer\PHPMailer;
+
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
@@ -17,26 +21,26 @@
     }
 
     if (count($_SESSION['cart']) > 0) {
-        $question_marks_array = array_fill(0, count($_SESSION['cart']), '?');
-        $question_marks_string = implode(", ", $question_marks_array);
-        $stmt = $dbh->prepare('SELECT * FROM products WHERE id IN ('.$question_marks_string.')');
+        $questionMarksArray = array_fill(0, count($_SESSION['cart']), '?');
+        $questionMarksString = implode(", ", $questionMarksArray);
+        $stmt = $dbh->prepare('SELECT * FROM products WHERE id IN ('.$questionMarksString.')');
         $stmt->execute($_SESSION['cart']);
         $products = $stmt->fetchAll();
     } else {
         $products = [];
     }
 
-    $submit_ok = True;
+    $submitOk = True;
     $errors = [];
     $errors['name'] = '';
     $errors['contact_details'] = '';
     $errors['comments'] = '';
     $errors['send_email'] = '';
-    $mail_status = '';
-    $save_order_status = '';
+    $mailStatus = '';
+    $saveOrderStatus = '';
 
     $name = '';
-    $contact_details = '';
+    $contactDetails = '';
     $comments = '';
 
     // Validate form data and send email
@@ -44,80 +48,87 @@
         if (strlen($_POST['name']) > 5) {
             $name = validateInput($_POST['name']);
         } else {
-            $submit_ok = False;
-            $errors['name'] = 'Input name error!';
+            $submitOk = False;
+            $errors['name'] = translate('Input name error!');
         }
 
         if (strlen($_POST['contact_details']) > 5) {
-            $contact_details = validateInput($_POST['contact_details']);
+            $contactDetails = validateInput($_POST['contact_details']);
         } else {
-            $submit_ok = False;
-            $errors['contact_details'] = 'Input contact error!';
+            $submitOk = False;
+            $errors['contact_details'] = translate('Input contact error!');
         }
 
         if (strlen($_POST['comments']) > 5) {
             $comments = validateInput($_POST['comments']);
         } else {
-            $submit_ok = False;
-            $errors['comments'] = 'Input comments error';
+            $submitOk = False;
+            $errors['comments'] = translate('Input comments error');
         }
 
         if (count($_SESSION['cart']) < 1) {
-            $submit_ok = False;
-            $order_status = 'There are not enough products!';
+            $submitOk = False;
+            $orderStatus = translate('There are not enough products!');
         }
 
-        if ($submit_ok) {
+        if ($submitOk) {
             //Save data to database
-            $save_order_status = translate('Please try again.');
+            $saveOrderStatus = translate('Please try again.');
 
             $date = date('Y-m-d H:i:s');
 
-            $stmt = $dbh->prepare('INSERT INTO orders (customer_details, creation_date) VALUES (?,?)');
-            $stmt->execute([$contact_details, $date]);
-            $last_order_id = $dbh->lastInsertId();
+            $stmt = $dbh->prepare('INSERT INTO orders (customer_details, creation_date, comments) VALUES (?,?,?)');
+            $stmt->execute([$contactDetails, $date, $comments]);
+            $lastOrderId = $dbh->lastInsertId();
 
-            foreach ($_SESSION['cart'] as $product_id) {
+            foreach ($_SESSION['cart'] as $productId) {
                 $stmt = $dbh->prepare('INSERT INTO products_orders (product_id, order_id) VALUES (?,?)');
-                $stmt->execute([$product_id, $last_order_id]);
+                $stmt->execute([$productId, $lastOrderId]);
             }
-            $save_order_status = translate('The order has been created.');
+            $saveOrderStatus = translate('The order has been created.');
 
             //Send email
-            $to = SHOP_MANAGER_EMAIL;
-            $subject = translate('New order');
-            $from = SHOP_MANAGER_EMAIL;
-
-            // To send HTML mail, the Content-type header must be set
-            $headers  = 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-
-            // Create email headers
-            $headers .= 'From: ' . $from . "\r\n".
-                'Reply-To: ' . $from . "\r\n" .
-                'X-Mailer: PHP/' . phpversion();
-
-            // Compose a simple HTML email message
+            //Compose a simple HTML email message
             $message = '<html><body>';
-            $message .= translate('Name: ') . translate($name) . translate(' Contact Details: ') . translate($contact_details) . translate(' Comments: ') . translate($comments);
+            $message .= translate('Name: ') . $name . translate(' Contact Details: ') . $contactDetails . translate(' Comments: ') . $comments;
             $message .= '<div class="product-list">';
             foreach ($products as $product) {
-                $image_src = 'images/' . $product['image_name'];
+                $imageSrc = 'http://' . $_SERVER['HTTP_HOST'] .'/images/' . $product['image_name'];
                 $message .= '<div class="product">';
-                $message .= '<img src="'. $image_src .'">';
+                $message .= '<img src="'. $imageSrc .'">';
                 $message .= $product['id'] . translate('Title: ') . $product['title'] . translate(' Price: ') . $product['price'];
                 $message .= '</div>';
             }
             $message .= '</div>';
             $message .= '</body></html>';
+
+
+            $mail = new PHPMailer();
+
+            $mail->isSMTP();
+            $mail->Host = 'smtp.mailtrap.io';
+            $mail->SMTPAuth = true;
+            $mail->Username = MAIL_USERNAME;
+            $mail->Password = MAIL_PASSWORD;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 2525;
+
+            $mail->setFrom(USER_EMAIL, 'First Last');
+            $mail->AddAddress(SHOP_MANAGER_EMAIL, 'First Name');
+            $mail->Subject = translate('New order');
+
+            $mail->isHTML(true);
+
+            $mail->Body = $message;
+
             // Sending email
-            if (mail($to, $subject, $message, $headers)) {
-                $mail_status = translate('Your mail has been sent successfully.');
+            if($mail->send()){
+                $mailStatus = translate('Your mail has been sent successfully.');
             } else {
-                $mail_status = translate('Unable to send email. Please try again.');
+                $mailStatus = translate('Unable to send email. Error: ' . $mail->ErrorInfo);
             }
         } else {
-            $mail_status = translate('Unable to send email. Please try again.');
+            $mailStatus = translate('Unable to send email. Please try again.');
         }
     }
 ?>
@@ -148,7 +159,7 @@
                 <input type="text" name="name" value="<?= $name; ?>" placeholder="<?= translate('Name'); ?>">
                 <?= $errors['name']; ?>
                 <br>
-                <input type="text" name="contact_details" value="<?= $contact_details; ?>" placeholder="<?= translate('Contact details'); ?>">
+                <input type="text" name="contact_details" value="<?= $contactDetails; ?>" placeholder="<?= translate('Contact details'); ?>">
                 <?= $errors['contact_details']; ?>
                 <br>
                 <textarea name="comments" rows="10" cols="30" placeholder="Comments"><?= $comments; ?></textarea>
@@ -156,8 +167,8 @@
                 <br>
                 <input type="submit" name="submit" placeholder="<?= translate('Checkout'); ?>">
             </form>
-            <?= $save_order_status; ?>
-            <?= $mail_status; ?>
+            <?= $saveOrderStatus; ?>
+            <?= $mailStatus; ?>
         </div>
     </body>
 </html>

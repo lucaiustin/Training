@@ -7,33 +7,33 @@
     $error['submit'] = '';
     $error['login'] = '';
 
-    $validated_username = '';
-    $validated_password = '';
+    $validatedUsername = '';
+    $validatedPassword = '';
 
     if (isset($_POST['submit'])) {
-        $submit_ok = True;
+        $submitOk = True;
 
         if (strlen($_POST['username']) > 3) {
-            $validated_username = validateInput($_POST['username']);
+            $validatedUsername = validateInput($_POST['username']);
         } else {
             $error['username'] = translate('Username error!');
-            $submit_ok = False;
+            $submitOk = False;
         }
 
         if (strlen($_POST['password']) > 3) {
-            $validated_password = validateInput($_POST['password']);
+            $validatedPassword = validateInput($_POST['password']);
         } else {
             $error['password'] = translate('Password error!');
-            $submit_ok = False;
+            $submitOk = False;
         }
 
-        if ($submit_ok == True) {
-            if (strcmp($validated_username, USERNAME) == 0 && strcmp($validated_password, PASSWORD) == 0) {
-                $_SESSION['username'] = $validated_username;
+        if ($submitOk == True) {
+            if (strcmp($validatedUsername, USERNAME) == 0 && strcmp($validatedPassword, PASSWORD) == 0) {
+                $_SESSION['username'] = $validatedUsername;
                 header('Location: products.php');
                 exit;
             } else {
-                $error['login'] = 'Invalid user or password.';
+                $error['login'] = translate('Invalid user or password.');
             }
         } else {
             $error['submit'] = translate('Please try again.');
@@ -46,10 +46,10 @@
     </head>
     <body>
         <form action="login.php" method="post">
-            <input type="text" name="username" value="<?= $validated_username; ?>" placeholder="<?= translate('Username'); ?>"><br>
+            <input type="text" name="username" value="<?= $validatedUsername; ?>" placeholder="<?= translate('Username'); ?>"><br>
             <?= $error['username']; ?>
 
-            <input type="password" name="password" value="<?= $validated_password; ?>" placeholder="<?= translate('Password'); ?>"><br>
+            <input type="password" name="password" value="<?= $validatedPassword; ?>" placeholder="<?= translate('Password'); ?>"><br>
             <?= $error['password']; ?>
 
             <input type="submit" name="submit" placeholder="<?= translate('Login'); ?>">
