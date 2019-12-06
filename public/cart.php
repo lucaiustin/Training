@@ -2,7 +2,7 @@
 
     require_once('../common.php');
 
-    require '../vendor/autoload.php';
+    require_once('../vendor/autoload.php');
 
     use PHPMailer\PHPMailer\PHPMailer;
 

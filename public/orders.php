@@ -12,19 +12,9 @@
     $errors['products'] = '';
     $submitMessage = '';
 
-    $orders = [];
     $stmt = $dbh->prepare('SELECT o.id, creation_date,  customer_details, sum(p.price) as price_sum FROM orders o INNER JOIN products_orders po on o.id = po.order_id INNER JOIN products p ON po.product_id = p.id GROUP BY o.id');
     $stmt->execute();
-    $ordersInfo = $stmt->fetchAll();
-
-    foreach ($ordersInfo as $info) {
-        $order = [];
-        $order['id'] = $info['id'];
-        $order['creation_date'] = $info['creation_date'];
-        $order['customer_details'] = $info['customer_details'];
-        $order['total'] = $info['price_sum'];
-        array_push($orders, $order);
-    }
+    $orders = $stmt->fetchAll();
 ?>
 <html>
     <head>
@@ -38,7 +28,7 @@
                     <div class="order">
                         <?= $order['creation_date']; ?>
                         <?= $order['customer_details']; ?>
-                        <?= $order['total']; ?>
+                        <?= $order['price_sum']; ?>
                     </div>
                     <a href = "order.php?id=<?= $order['id']; ?>"><?= translate('View Order'); ?></a>
                     <hr>
