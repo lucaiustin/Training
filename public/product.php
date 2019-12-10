@@ -43,7 +43,7 @@
             }
 
             if ($fileSize > 2097152) {
-                $errors['image_file'] = translate('File size must be exactly 2 MB');
+                $errors['image_file'] = translate('File size must be exactly 2 MB.');
                 $submitOk = False;
             }
         }

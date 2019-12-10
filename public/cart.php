@@ -1,5 +1,4 @@
 <?php
-
     require_once('../common.php');
 
     require_once('../vendor/autoload.php');
@@ -63,7 +62,7 @@
             $comments = validateInput($_POST['comments']);
         } else {
             $submitOk = False;
-            $errors['comments'] = translate('Input comments error');
+            $errors['comments'] = translate('Input comments error!');
         }
 
         if (count($_SESSION['cart']) < 1) {
@@ -90,13 +89,17 @@
             //Send email
             //Compose a simple HTML email message
             $message = '<html><body>';
-            $message .= translate('Name: ') . $name . translate(' Contact Details: ') . $contactDetails . translate(' Comments: ') . $comments;
+            $message .= translate('Name') . ': ' . $name . translate(' Contact Details') . ': ' . $contactDetails . translate(' Comments') . ': ' . $comments;
             $message .= '<div class="product-list">';
             foreach ($products as $product) {
-                $imageSrc = 'http://' . $_SERVER['HTTP_HOST'] .'/images/' . $product['image_name'];
+                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+                    $imageSrc = 'http://' . $_SERVER['HTTP_HOST'] . '/images/' . $product['image_name'];
+                } else {
+                    $imageSrc = $_SERVER['HTTP_HOST'] . '/images/' . $product['image_name'];
+                }
                 $message .= '<div class="product">';
                 $message .= '<img src="'. $imageSrc .'">';
-                $message .= $product['id'] . translate('Title: ') . $product['title'] . translate(' Price: ') . $product['price'];
+                $message .= $product['id'] . translate('Title') . ': ' . $product['title'] . translate(' Price') . ': ' . $product['price'];
                 $message .= '</div>';
             }
             $message .= '</div>';
@@ -113,8 +116,8 @@
             $mail->SMTPSecure = 'tls';
             $mail->Port = 2525;
 
-            $mail->setFrom(USER_EMAIL, 'First Last');
-            $mail->AddAddress(SHOP_MANAGER_EMAIL, 'First Name');
+            $mail->setFrom(USER_EMAIL);
+            $mail->AddAddress(SHOP_MANAGER_EMAIL);
             $mail->Subject = translate('New order');
 
             $mail->isHTML(true);
@@ -125,7 +128,7 @@
             if($mail->send()){
                 $mailStatus = translate('Your mail has been sent successfully.');
             } else {
-                $mailStatus = translate('Unable to send email. Error: ' . $mail->ErrorInfo);
+                $mailStatus = translate('Unable to send email. Error' ) . ': ' . $mail->ErrorInfo;
             }
         } else {
             $mailStatus = translate('Unable to send email. Please try again.');
@@ -162,7 +165,7 @@
                 <input type="text" name="contact_details" value="<?= $contactDetails; ?>" placeholder="<?= translate('Contact details'); ?>">
                 <?= $errors['contact_details']; ?>
                 <br>
-                <textarea name="comments" rows="10" cols="30" placeholder="Comments"><?= $comments; ?></textarea>
+                <textarea name="comments" rows="10" cols="30" placeholder="<?= translate('Comments') ?>"><?= $comments; ?></textarea>
                 <?= $errors['comments']; ?>
                 <br>
                 <input type="submit" name="submit" placeholder="<?= translate('Checkout'); ?>">
