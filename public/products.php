@@ -45,13 +45,15 @@
                             <img src="images/<?= $product['image_name']; ?>">
                         </div>
                         <div class="product-info">
-                            <?= $product['id']; ?>
-                            <?= $product['title']; ?>
-                            <?= $product['price']; ?>
+                            <p><?= $product['id']; ?></p>
+                            <p><?= $product['title']; ?></p>
+                            <p><?= $product['description']; ?></p>
+                            <p><?= $product['price']; ?></p>
                         </div>
-                        <a href="product.php?id=<?= $product['id']; ?>"><?= translate('Edit'); ?></a>
-                        <a href="products.php?id=<?= $product['id']; ?>"><?= translate('Delete'); ?></a>
                     </div>
+                    <a href="product.php?id=<?= $product['id']; ?>"><?= translate('Edit'); ?></a>
+                    <a href="products.php?id=<?= $product['id']; ?>"><?= translate('Delete'); ?></a>
+                    <hr>
                 <?php endforeach; ?>
             </div>
             <a href="product.php"><?= translate('Add'); ?></a>

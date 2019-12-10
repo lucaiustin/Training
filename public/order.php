@@ -29,30 +29,38 @@
 ?>
 <html>
     <head>
-        <title>
-            <?= translate('Order'); ?>
-        </title>
+        <title><?= translate('Order'); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body>
         <div class="container">
             <div class="order">
+                <?= $order['name']; ?>
+                <br>
                 <?= $order['customer_details']; ?>
                 <br>
-                <?= $order['creation_date']; ?>
                 <?= $order['comments']; ?>
-                <?php if(count($order['products']) > 0): ?>
-                    <ul>
-                        <?php foreach($order['products'] as $product): ?>
-                            <li>
-                                <?= $product['id']; ?>
-                                <?= $product['title']; ?>
-                                <?= $product['description']; ?>
-                                <?= $product['price']; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
+                <br>
                 <?= $order['total']; ?>
+                <br>
+                <?= $order['creation_date']; ?>
+                <br><br>
+
+                <?php if(count($order['products']) > 0): ?>
+                        <?php foreach($order['products'] as $product): ?>
+                            <div class="product">
+                                <div class="product-image">
+                                    <img src="images/<?= $product['image_name']; ?>">
+                                </div>
+                                <div class="product-info">
+                                    <p><?= $product["id"]; ?></p>
+                                    <p><?= $product["title"]; ?></p>
+                                    <p><?= $product["description"]; ?></p>
+                                    <p><?= $product["price"]; ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </body>

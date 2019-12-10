@@ -37,6 +37,8 @@
     $errors['send_email'] = '';
     $mailStatus = '';
     $saveOrderStatus = '';
+    $orderStatus = '';
+    $submitMessage = '';
 
     $name = '';
     $contactDetails = '';
@@ -72,19 +74,18 @@
 
         if ($submitOk) {
             //Save data to database
-            $saveOrderStatus = translate('Please try again.');
 
             $date = date('Y-m-d H:i:s');
 
-            $stmt = $dbh->prepare('INSERT INTO orders (customer_details, creation_date, comments) VALUES (?,?,?)');
-            $stmt->execute([$contactDetails, $date, $comments]);
+            $stmt = $dbh->prepare('INSERT INTO orders (name, customer_details, creation_date, comments) VALUES (?,?,?,?)');
+            $stmt->execute([$name, $contactDetails, $date, $comments]);
             $lastOrderId = $dbh->lastInsertId();
 
             foreach ($_SESSION['cart'] as $productId) {
                 $stmt = $dbh->prepare('INSERT INTO products_orders (product_id, order_id) VALUES (?,?)');
                 $stmt->execute([$productId, $lastOrderId]);
             }
-            $saveOrderStatus = translate('The order has been created.');
+            $orderStatus = translate('The order has been created.');
 
             //Send email
             //Compose a simple HTML email message
@@ -131,7 +132,7 @@
                 $mailStatus = translate('Unable to send email. Error' ) . ': ' . $mail->ErrorInfo;
             }
         } else {
-            $mailStatus = translate('Unable to send email. Please try again.');
+            $submitMessage = translate('Please try again.');
         }
     }
 ?>
@@ -149,12 +150,14 @@
                             <img src="images/<?= $product['image_name']; ?>">
                         </div>
                         <div class="product-info">
-                            <?= $product['id']; ?>
-                            <?= $product['title']; ?>
-                            <?= $product['price']; ?>
+                            <p><?= $product['id']; ?></p>
+                            <p><?= $product['title']; ?></p>
+                            <p><?= $product['description']; ?></p>
+                            <p><?= $product['price']; ?></p>
                         </div>
-                        <a href="/cart.php?id=<?= $product['id']; ?>"><?= translate('Remove');?></a>
                     </div>
+                    <a href="/cart.php?id=<?= $product['id']; ?>"><?= translate('Remove');?></a>
+                    <hr>
                 <?php endforeach; ?>
             </div>
             <a href="index.php"><?= translate('Go to index'); ?></a>
@@ -162,16 +165,18 @@
                 <input type="text" name="name" value="<?= $name; ?>" placeholder="<?= translate('Name'); ?>">
                 <?= $errors['name']; ?>
                 <br>
-                <input type="text" name="contact_details" value="<?= $contactDetails; ?>" placeholder="<?= translate('Contact details'); ?>">
+                <input type="text" name="contact_details" value="<?= $contactDetails; ?>" placeholder="<?= translate('Contact Details'); ?>">
                 <?= $errors['contact_details']; ?>
                 <br>
                 <textarea name="comments" rows="10" cols="30" placeholder="<?= translate('Comments') ?>"><?= $comments; ?></textarea>
                 <?= $errors['comments']; ?>
                 <br>
-                <input type="submit" name="submit" placeholder="<?= translate('Checkout'); ?>">
+                <button name="submit" type="submit"><?= translate('Checkout') ?></button>
             </form>
+            <?= $submitMessage; ?>
             <?= $saveOrderStatus; ?>
             <?= $mailStatus; ?>
+            <?= $orderStatus; ?>
         </div>
     </body>
 </html>

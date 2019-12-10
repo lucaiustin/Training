@@ -5,7 +5,6 @@
     $error['username'] = '';
     $error['password'] = '';
     $error['submit'] = '';
-    $error['login'] = '';
 
     $validatedUsername = '';
     $validatedPassword = '';
@@ -16,24 +15,33 @@
         if (strlen($_POST['username']) > 3) {
             $validatedUsername = validateInput($_POST['username']);
         } else {
-            $error['username'] = translate('Username error!');
+            $error['username'] = translate('username is invalid');
             $submitOk = False;
         }
 
         if (strlen($_POST['password']) > 3) {
             $validatedPassword = validateInput($_POST['password']);
         } else {
-            $error['password'] = translate('Password error!');
+            $error['password'] = translate('password is invalid');
             $submitOk = False;
         }
 
         if ($submitOk == True) {
-            if (strcmp($validatedUsername, USERNAME) == 0 && strcmp($validatedPassword, PASSWORD) == 0) {
+            $loginFlag = True;
+            if (strcmp($validatedUsername, USERNAME) != 0) {
+                $error['username'] = translate('username is invalid');
+                $loginFlag = False;
+            }
+
+            if (strcmp($validatedPassword, PASSWORD) != 0) {
+                $error['password'] = translate('password is invalid');
+                $loginFlag = False;
+            }
+
+            if ($loginFlag == True) {
                 $_SESSION['username'] = $validatedUsername;
                 header('Location: products.php');
                 exit;
-            } else {
-                $error['login'] = translate('Invalid user or password.');
             }
         } else {
             $error['submit'] = translate('Please try again.');
@@ -43,18 +51,20 @@
 <html>
     <head>
         <title><?= translate('Login'); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body>
-        <form action="login.php" method="post">
-            <input type="text" name="username" value="<?= $validatedUsername; ?>" placeholder="<?= translate('Username'); ?>"><br>
-            <?= $error['username']; ?>
-
-            <input type="password" name="password" value="<?= $validatedPassword; ?>" placeholder="<?= translate('Password'); ?>"><br>
-            <?= $error['password']; ?>
-
-            <input type="submit" name="submit" placeholder="<?= translate('Login'); ?>">
-            <?= $error['submit']; ?>
-            <?= $error['login']; ?>
-        </form>
+        <div class="container">
+            <form action="login.php" method="post">
+                <input type="text" name="username" value="<?= $validatedUsername; ?>" placeholder="<?= translate('Username'); ?>">
+                <?= $error['username']; ?>
+                <br>
+                <input type="password" name="password" value="<?= $validatedPassword; ?>" placeholder="<?= translate('Password'); ?>">
+                <?= $error['password']; ?>
+                <br>
+                <button type="submit" name="submit"><?= translate('Login') ?></button>
+                <?= $error['submit']; ?>
+            </form>
+        </div>
     </body>
 </html>

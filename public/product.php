@@ -32,7 +32,7 @@
         $submitOk = True;
 
         if (isset($_FILES['image'])) {
-            $fileName = $_FILES['image']['name'];
+            $fileName = uniqid();
             $fileSize = $_FILES['image']['size'];
             $fileTmp = $_FILES['image']['tmp_name'];
             $fileType = $_FILES['image']['type'];
@@ -51,7 +51,6 @@
         $product['title'] = validateInput($_POST['title']);
         $product['description'] = validateInput($_POST['description']);
         $product['price'] = validateInput($_POST['price']);
-        $product['image_name'] = validateInput($fileName);
 
         if (strlen($product['title']) < 5) {
             $submitOk = False;
@@ -68,23 +67,19 @@
             $errors['price'] = translate('Input price error!');
         }
 
-        if (strlen($product['image_name']) < 5) {
-            $submitOk = False;
-            $errors['image_name'] = translate('Input image_name error!');
-        }
-
         if ($submitOk) {
+            unlink('images/' . $product['image_name']);
             move_uploaded_file($fileTmp, 'images/' . $fileName);
 
             if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
                 $stmt = $dbh->prepare('UPDATE products SET title=?, description=?, price=?, image_name=? WHERE id=?');
-                $stmt->execute([$product['title'], $product['description'], $product['price'], $product['image_name'], $_GET['id']]);
+                $stmt->execute([$product['title'], $product['description'], $product['price'], $fileName, $_GET['id']]);
 
                 header('Location: products.php');
                 exit;
             } else {
                 $stmt = $dbh->prepare('INSERT INTO products (title, description, price, image_name) VALUES (?,?,?,?)');
-                $stmt->execute([$product['title'], $product['description'], $product['price'], $product['image_name']]);
+                $stmt->execute([$product['title'], $product['description'], $product['price'], $fileName]);
 
                 header('Location: products.php');
                 exit;
@@ -97,27 +92,27 @@
 <html>
     <head>
         <title><?= translate('Product') ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data">
-            <input type="text" name="title" value="<?= $product['title']; ?>" placeholder="<?= translate('Title'); ?>">
-            <?= $errors['title']; ?>
-            <br>
-            <input type="text" name="description" value="<?= $product['description']; ?>" placeholder="<?= translate('Description'); ?>">
-            <?= $errors['contact_details']; ?>
-            <br>
-            <input type="text" name="price" value="<?= $product['price']; ?>" placeholder="<?= translate('Price'); ?>">
-            <?= $errors['price']; ?>
-            <br>
-            <input type="text" name="image-name" value="<?= $product['image_name']; ?>" placeholder="<?= translate('Image Name'); ?>">
-            <?= $errors['image_name']; ?>
-            <br>
-            <input type="file" name="image">
-            <?= $errors['image_file']; ?>
-            <br>
-            <input type="submit" name="submit" value="<?= translate('Save'); ?>">
-        </form>
-        <?= $errors['submit']; ?>
-        <a href="products.php"><?= translate('Products'); ?></a>
+        <div class="container">
+            <form method="post" enctype="multipart/form-data">
+                <input type="text" name="title" value="<?= $product['title']; ?>" placeholder="<?= translate('Title'); ?>">
+                <?= $errors['title']; ?>
+                <br>
+                <input type="text" name="description" value="<?= $product['description']; ?>" placeholder="<?= translate('Description'); ?>">
+                <?= $errors['contact_details']; ?>
+                <br>
+                <input type="text" name="price" value="<?= $product['price']; ?>" placeholder="<?= translate('Price'); ?>">
+                <?= $errors['price']; ?>
+                <br>
+                <input type="file" name="image">
+                <?= $errors['image_file']; ?>
+                <br>
+                <input type="submit" name="submit" value="<?= translate('Save'); ?>">
+            </form>
+            <?= $errors['submit']; ?>
+            <a href="products.php"><?= translate('Products'); ?></a>
+        </div>
     </body>
 </html>

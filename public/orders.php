@@ -26,9 +26,9 @@
             <div class="orders">
                 <?php foreach($orders as $order):?>
                     <div class="order">
-                        <?= $order['creation_date']; ?>
-                        <?= $order['customer_details']; ?>
-                        <?= $order['price_sum']; ?>
+                        <p><?= $order['creation_date']; ?></p>
+                        <p><?= $order['customer_details']; ?></p>
+                        <p><?= $order['price_sum']; ?></p>
                     </div>
                     <a href = "order.php?id=<?= $order['id']; ?>"><?= translate('View Order'); ?></a>
                     <hr>
