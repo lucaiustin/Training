@@ -62,7 +62,7 @@
             $errors['contact_details'] = translate('Input description error!');
         }
 
-        if (strlen($product['price']) < 3) {
+        if (!is_numeric($product['price'])) {
             $submitOk = False;
             $errors['price'] = translate('Input price error!');
         }
