@@ -49,24 +49,24 @@ if (isset( $_POST['submit'] )) {
 }
 ?>
 <html>
-<head>
-    <title><?= translate( 'Login' ); ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <form action="login.php" method="post">
-        <input type="text" name="username" value="<?= $validatedUsername; ?>"
-               placeholder="<?= translate( 'Username' ); ?>">
-        <?= $error['username']; ?>
-        <br>
-        <input type="password" name="password" value="<?= $validatedPassword; ?>"
-               placeholder="<?= translate( 'Password' ); ?>">
-        <?= $error['password']; ?>
-        <br>
-        <button type="submit" name="submit"><?= translate( 'Login' ) ?></button>
-        <?= $error['submit']; ?>
-    </form>
-</div>
-</body>
+    <head>
+        <title><?= translate( 'Login' ); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <form action="login.php" method="post">
+                <input type="text" name="username" value="<?= $validatedUsername; ?>"
+                       placeholder="<?= translate( 'Username' ); ?>">
+                <?= $error['username']; ?>
+                <br>
+                <input type="password" name="password" value="<?= $validatedPassword; ?>"
+                       placeholder="<?= translate( 'Password' ); ?>">
+                <?= $error['password']; ?>
+                <br>
+                <button type="submit" name="submit"><?= translate( 'Login' ) ?></button>
+                <?= $error['submit']; ?>
+            </form>
+        </div>
+    </body>
 </html>

@@ -29,30 +29,30 @@ if ($stmt !== FALSE) {
 }
 ?>
 <html>
-<head>
-    <title><?= translate( 'Products' ); ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <div class="product-list">
-        <?php foreach ($products as $product): ?>
-            <div class="product">
-                <div class="product-image">
-                    <img src="images/<?= $product['image_name']; ?>">
-                </div>
-                <div class="product-info">
-                    <p><?= $product["id"]; ?></p>
-                    <p><?= $product["title"]; ?></p>
-                    <p><?= $product["description"]; ?></p>
-                    <p><?= $product["price"]; ?></p>
-                </div>
+    <head>
+        <title><?= translate( 'Products' ); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="product-list">
+                <?php foreach ($products as $product): ?>
+                    <div class="product">
+                        <div class="product-image">
+                            <img src="images/<?= $product['image_name']; ?>">
+                        </div>
+                        <div class="product-info">
+                            <p><?= $product["id"]; ?></p>
+                            <p><?= $product["title"]; ?></p>
+                            <p><?= $product["description"]; ?></p>
+                            <p><?= $product["price"]; ?></p>
+                        </div>
+                    </div>
+                    <a href="/index.php?id=<?= $product["id"]; ?>"><?= translate( 'Add' ); ?></a>
+                    <hr>
+                <?php endforeach; ?>
             </div>
-            <a href="/index.php?id=<?= $product["id"]; ?>"><?= translate( 'Add' ); ?></a>
-            <hr>
-        <?php endforeach; ?>
-    </div>
-    <a href="cart.php"><?= translate( 'Go to cart' ); ?></a>
-</div>
-</body>
+            <a href="cart.php"><?= translate( 'Go to cart' ); ?></a>
+        </div>
+    </body>
 </html>

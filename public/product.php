@@ -92,30 +92,30 @@ if (isset( $_POST['submit'] )) {
 }
 ?>
 <html>
-<head>
-    <title><?= translate( 'Product' ) ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <form method="post" enctype="multipart/form-data">
-        <input type="text" name="title" value="<?= $product['title']; ?>" placeholder="<?= translate( 'Title' ); ?>">
-        <?= $errors['title']; ?>
-        <br>
-        <input type="text" name="description" value="<?= $product['description']; ?>"
-               placeholder="<?= translate( 'Description' ); ?>">
-        <?= $errors['contact_details']; ?>
-        <br>
-        <input type="text" name="price" value="<?= $product['price']; ?>" placeholder="<?= translate( 'Price' ); ?>">
-        <?= $errors['price']; ?>
-        <br>
-        <input type="file" name="image">
-        <?= $errors['image_file']; ?>
-        <br>
-        <input type="submit" name="submit" value="<?= translate( 'Save' ); ?>">
-    </form>
-    <?= $errors['submit']; ?>
-    <a href="products.php"><?= translate( 'Products' ); ?></a>
-</div>
-</body>
+    <head>
+        <title><?= translate( 'Product' ) ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <form method="post" enctype="multipart/form-data">
+                <input type="text" name="title" value="<?= $product['title']; ?>" placeholder="<?= translate( 'Title' ); ?>">
+                <?= $errors['title']; ?>
+                <br>
+                <input type="text" name="description" value="<?= $product['description']; ?>"
+                       placeholder="<?= translate( 'Description' ); ?>">
+                <?= $errors['contact_details']; ?>
+                <br>
+                <input type="text" name="price" value="<?= $product['price']; ?>" placeholder="<?= translate( 'Price' ); ?>">
+                <?= $errors['price']; ?>
+                <br>
+                <input type="file" name="image">
+                <?= $errors['image_file']; ?>
+                <br>
+                <input type="submit" name="submit" value="<?= translate( 'Save' ); ?>">
+            </form>
+            <?= $errors['submit']; ?>
+            <a href="products.php"><?= translate( 'Products' ); ?></a>
+        </div>
+    </body>
 </html>

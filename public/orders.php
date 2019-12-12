@@ -17,23 +17,23 @@ $stmt->execute();
 $orders = $stmt->fetchAll();
 ?>
 <html>
-<head>
-    <title><?= translate( 'Orders' ); ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <div class="orders">
-        <?php foreach ($orders as $order): ?>
-            <div class="order">
-                <p><?= $order['creation_date']; ?></p>
-                <p><?= $order['customer_details']; ?></p>
-                <p><?= $order['price_sum']; ?></p>
+    <head>
+        <title><?= translate( 'Orders' ); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="orders">
+                <?php foreach ($orders as $order): ?>
+                    <div class="order">
+                        <p><?= $order['creation_date']; ?></p>
+                        <p><?= $order['customer_details']; ?></p>
+                        <p><?= $order['price_sum']; ?></p>
+                    </div>
+                    <a href="order.php?id=<?= $order['id']; ?>"><?= translate( 'View Order' ); ?></a>
+                    <hr>
+                <?php endforeach; ?>
             </div>
-            <a href="order.php?id=<?= $order['id']; ?>"><?= translate( 'View Order' ); ?></a>
-            <hr>
-        <?php endforeach; ?>
-    </div>
-</div>
-</body>
+        </div>
+    </body>
 </html>

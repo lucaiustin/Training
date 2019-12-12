@@ -32,32 +32,32 @@ $stmt->execute();
 $products = $stmt->fetchAll();
 ?>
 <html>
-<head>
-    <title><?= translate( 'Products' ); ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <div class="product-list">
-        <?php foreach ($products as $product): ?>
-            <div class="product">
-                <div class="product-image">
-                    <img src="images/<?= $product['image_name']; ?>">
-                </div>
-                <div class="product-info">
-                    <p><?= $product['id']; ?></p>
-                    <p><?= $product['title']; ?></p>
-                    <p><?= $product['description']; ?></p>
-                    <p><?= $product['price']; ?></p>
-                </div>
+    <head>
+        <title><?= translate( 'Products' ); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="product-list">
+                <?php foreach ($products as $product): ?>
+                    <div class="product">
+                        <div class="product-image">
+                            <img src="images/<?= $product['image_name']; ?>">
+                        </div>
+                        <div class="product-info">
+                            <p><?= $product['id']; ?></p>
+                            <p><?= $product['title']; ?></p>
+                            <p><?= $product['description']; ?></p>
+                            <p><?= $product['price']; ?></p>
+                        </div>
+                    </div>
+                    <a href="product.php?id=<?= $product['id']; ?>"><?= translate( 'Edit' ); ?></a>
+                    <a href="products.php?id=<?= $product['id']; ?>"><?= translate( 'Delete' ); ?></a>
+                    <hr>
+                <?php endforeach; ?>
             </div>
-            <a href="product.php?id=<?= $product['id']; ?>"><?= translate( 'Edit' ); ?></a>
-            <a href="products.php?id=<?= $product['id']; ?>"><?= translate( 'Delete' ); ?></a>
-            <hr>
-        <?php endforeach; ?>
-    </div>
-    <a href="product.php"><?= translate( 'Add' ); ?></a>
-    <a href="products.php?logout=True"><?= translate( 'Logout' ); ?></a>
-</div>
-</body>
+            <a href="product.php"><?= translate( 'Add' ); ?></a>
+            <a href="products.php?logout=True"><?= translate( 'Logout' ); ?></a>
+        </div>
+    </body>
 </html>

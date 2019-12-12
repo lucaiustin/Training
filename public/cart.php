@@ -133,48 +133,48 @@ if (isset( $_POST['submit'] )) {
 }
 ?>
 <html>
-<head>
-    <title><?= translate( 'Cart' ); ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <div class="product-list">
-        <?php foreach ($products as $product): ?>
-            <div class="product">
-                <div class="product-image">
-                    <img src="images/<?= $product['image_name']; ?>">
-                </div>
-                <div class="product-info">
-                    <p><?= $product['id']; ?></p>
-                    <p><?= $product['title']; ?></p>
-                    <p><?= $product['description']; ?></p>
-                    <p><?= $product['price']; ?></p>
-                </div>
+    <head>
+        <title><?= translate( 'Cart' ); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="product-list">
+                <?php foreach ($products as $product): ?>
+                    <div class="product">
+                        <div class="product-image">
+                            <img src="images/<?= $product['image_name']; ?>">
+                        </div>
+                        <div class="product-info">
+                            <p><?= $product['id']; ?></p>
+                            <p><?= $product['title']; ?></p>
+                            <p><?= $product['description']; ?></p>
+                            <p><?= $product['price']; ?></p>
+                        </div>
+                    </div>
+                    <a href="/cart.php?id=<?= $product['id']; ?>"><?= translate( 'Remove' ); ?></a>
+                    <hr>
+                <?php endforeach; ?>
             </div>
-            <a href="/cart.php?id=<?= $product['id']; ?>"><?= translate( 'Remove' ); ?></a>
-            <hr>
-        <?php endforeach; ?>
-    </div>
-    <a href="index.php"><?= translate( 'Go to index' ); ?></a>
-    <form method="post">
-        <input type="text" name="name" value="<?= $name; ?>" placeholder="<?= translate( 'Name' ); ?>">
-        <?= $errors['name']; ?>
-        <br>
-        <input type="text" name="contact_details" value="<?= $contactDetails; ?>"
-               placeholder="<?= translate( 'Contact Details' ); ?>">
-        <?= $errors['contact_details']; ?>
-        <br>
-        <textarea name="comments" rows="10" cols="30"
-                  placeholder="<?= translate( 'Comments' ) ?>"><?= $comments; ?></textarea>
-        <?= $errors['comments']; ?>
-        <br>
-        <button name="submit" type="submit"><?= translate( 'Checkout' ) ?></button>
-    </form>
-    <?= $submitMessage; ?>
-    <?= $saveOrderStatus; ?>
-    <?= $mailStatus; ?>
-    <?= $orderStatus; ?>
-</div>
-</body>
+            <a href="index.php"><?= translate( 'Go to index' ); ?></a>
+            <form method="post">
+                <input type="text" name="name" value="<?= $name; ?>" placeholder="<?= translate( 'Name' ); ?>">
+                <?= $errors['name']; ?>
+                <br>
+                <input type="text" name="contact_details" value="<?= $contactDetails; ?>"
+                       placeholder="<?= translate( 'Contact Details' ); ?>">
+                <?= $errors['contact_details']; ?>
+                <br>
+                <textarea name="comments" rows="10" cols="30"
+                          placeholder="<?= translate( 'Comments' ) ?>"><?= $comments; ?></textarea>
+                <?= $errors['comments']; ?>
+                <br>
+                <button name="submit" type="submit"><?= translate( 'Checkout' ) ?></button>
+            </form>
+            <?= $submitMessage; ?>
+            <?= $saveOrderStatus; ?>
+            <?= $mailStatus; ?>
+            <?= $orderStatus; ?>
+        </div>
+    </body>
 </html>

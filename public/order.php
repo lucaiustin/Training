@@ -28,40 +28,40 @@ if (isset( $_GET['id'] )) {
 }
 ?>
 <html>
-<head>
-    <title><?= translate( 'Order' ); ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="container">
-    <div class="order">
-        <?= $order['name']; ?>
-        <br>
-        <?= $order['customer_details']; ?>
-        <br>
-        <?= $order['comments']; ?>
-        <br>
-        <?= $order['total']; ?>
-        <br>
-        <?= $order['creation_date']; ?>
-        <br><br>
+    <head>
+        <title><?= translate( 'Order' ); ?></title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="order">
+                <?= $order['name']; ?>
+                <br>
+                <?= $order['customer_details']; ?>
+                <br>
+                <?= $order['comments']; ?>
+                <br>
+                <?= $order['total']; ?>
+                <br>
+                <?= $order['creation_date']; ?>
+                <br><br>
 
-        <?php if (count( $order['products'] ) > 0): ?>
-            <?php foreach ($order['products'] as $product): ?>
-                <div class="product">
-                    <div class="product-image">
-                        <img src="images/<?= $product['image_name']; ?>">
-                    </div>
-                    <div class="product-info">
-                        <p><?= $product["id"]; ?></p>
-                        <p><?= $product["title"]; ?></p>
-                        <p><?= $product["description"]; ?></p>
-                        <p><?= $product["price"]; ?></p>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-</div>
-</body>
+                <?php if (count( $order['products'] ) > 0): ?>
+                    <?php foreach ($order['products'] as $product): ?>
+                        <div class="product">
+                            <div class="product-image">
+                                <img src="images/<?= $product['image_name']; ?>">
+                            </div>
+                            <div class="product-info">
+                                <p><?= $product["id"]; ?></p>
+                                <p><?= $product["title"]; ?></p>
+                                <p><?= $product["description"]; ?></p>
+                                <p><?= $product["price"]; ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </body>
 </html>
